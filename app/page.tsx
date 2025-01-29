@@ -90,7 +90,7 @@ export default function Home() {
         Implement wahl.chat on your website
       </h1>
 
-      <div className="flex flex-row gap-4 mt-6">
+      <div className="flex flex-row gap-4">
         <div className="flex flex-col gap-2 mt-6">
           <label htmlFor="partyId" className="text-sm font-bold">
             Party ID - Wähle bis zu 3 Parteien aus
