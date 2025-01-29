@@ -1,19 +1,23 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 // const BASE_URL = 'https://wahl.chat';
 const BASE_URL = 'https://wahl.chat';
 
 export default function Home() {
-  const [partyId, setPartyId] = useState<string[]>([]);
-  const [tenantId, setTenantId] = useState<string>('');
+  const params = useSearchParams();
+  const router = useRouter();
+
+  const partyIds = params.getAll('party_id');
+  const tenantId = params.get('tenant_id');
 
   const link = useMemo(() => {
     const url = new URL(`${BASE_URL}/api/embed`);
 
-    if (partyId.length > 0) {
-      partyId.forEach((id) => {
+    if (partyIds.length > 0) {
+      partyIds.forEach((id) => {
         if (!id) return;
         url.searchParams.append('party_id', id);
       });
@@ -24,14 +28,15 @@ export default function Home() {
     }
 
     return url.toString();
-  }, [partyId, tenantId]);
+  }, [partyIds, tenantId]);
 
   const handlePartyIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPartyIds = Array.from(
       e.target.selectedOptions,
       (option) => option.value
     );
-    setPartyId(selectedPartyIds);
+
+    updateQueryParams({ newPartyIds: selectedPartyIds });
   };
 
   const handleTenantIdSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,7 +44,32 @@ export default function Home() {
 
     const formData = new FormData(e.target as HTMLFormElement);
     const tenantId = formData.get('tenantId') as string;
-    setTenantId(tenantId);
+    updateQueryParams({ newTenantId: tenantId });
+  };
+
+  const updateQueryParams = ({
+    newPartyIds,
+    newTenantId,
+  }: {
+    newPartyIds?: string[];
+    newTenantId?: string;
+  }) => {
+    const params = new URLSearchParams();
+
+    const normalizedPartyIds = newPartyIds ?? partyIds;
+    const normalizedTenantId = newTenantId ?? tenantId;
+
+    if (normalizedPartyIds) {
+      normalizedPartyIds.forEach((id) => {
+        params.append('party_id', id);
+      });
+    }
+
+    if (normalizedTenantId) {
+      params.append('tenant_id', normalizedTenantId);
+    }
+
+    router.replace(`?${params.toString()}`);
   };
 
   const parties = {
@@ -68,7 +98,7 @@ export default function Home() {
           <select
             id="partyId"
             className="border-2 border-gray-300 rounded-lg p-2 w-fit"
-            value={partyId}
+            value={partyIds}
             onChange={handlePartyIdChange}
             multiple
           >
@@ -93,6 +123,7 @@ export default function Home() {
               className="border-2 border-gray-300 rounded-lg p-2 w-fit"
               placeholder="Tenant ID"
               name="tenantId"
+              defaultValue={tenantId ?? ''}
             />
 
             <button
