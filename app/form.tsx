@@ -90,7 +90,7 @@ export default function Form() {
           </label>
           <select
             id="partyId"
-            className="border-2 border-gray-300 rounded-lg p-2 w-fit"
+            className="border border-border rounded-lg p-2 w-fit"
             value={partyIds}
             onChange={handlePartyIdChange}
             multiple

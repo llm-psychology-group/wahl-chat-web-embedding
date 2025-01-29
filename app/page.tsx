@@ -10,7 +10,7 @@ export default function Home() {
       <h1 className="text-2xl font-bold">
         Implement wahl.chat on your website
       </h1>
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="text-sm text-muted-foreground mt-2">
         Checkout the{' '}
         <Link
           href="https://github.com/llm-psychology-group/wahl-chat-web-embedding"
